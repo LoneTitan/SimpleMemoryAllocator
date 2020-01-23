@@ -67,18 +67,18 @@ int main(int argc, char *argv[])
 		nodes[i] = allocate_n(i);
 	}
 
-	// for (int i = 0; i < num_replacements; i++)
-	// {
-	// 	replace(nodes);
-	// }
-	//
-	// for (i = 0; i < num_nodes; i++)
-	// {
-	// 	assert(nodes[i]);
-	// 	total_mem -= nodes[i]->size;
-	// 	myfree(nodes[i]);
-	// }
-	// myfree(nodes);
-	// printf("remain mem:%zd\n", total_mem);
+	for (int i = 0; i < num_replacements; i++)
+	{
+		replace(nodes);
+	}
+
+	for (i = 0; i < num_nodes; i++)
+	{
+		assert(nodes[i]);
+		total_mem -= nodes[i]->size;
+		myfree(nodes[i]);
+	}
+	myfree(nodes);
+	printf("remain mem:%zd\n", total_mem);
 	return 0;
 }

@@ -40,7 +40,7 @@ static void free_ram(void *addr, size_t size)
 {
 	munmap(addr, size);
 }
-static struct node* map[13] = {};
+static struct node* map[14] = {};
 void myfree(void *ptr)
 {
 	struct metadata* mdadd = (struct metadata*)((unsigned long)(ptr)& ~0xfff);
@@ -69,8 +69,9 @@ int ro(int n){
 			// printf("%d %d`", n, i);
 			if(1<<i >= n){
 				// printf("%d %d`", n, 1<<c);
-			return i;
+				return i;
 			}
+			c*=2;
 		}
 	}
 	else{
@@ -89,9 +90,7 @@ int ro(int n){
 }
 void *mymalloc(size_t size){
 
-	// printf("FUCK\n");
 	int round = ro(size);
-	// printf("FUCK\n");
 	if(size <= 4080){
 		if(map[round] == NULL){
 			void* mdp = alloc_from_ram(4096);
@@ -104,15 +103,14 @@ void *mymalloc(size_t size){
 			new_node -> prev = NULL;
 			new_node -> next = NULL;
 			printf("%p 		 %p %lu\n", mdp, ref,size);
-			for(int i = 0; i < 4080 ; i = i + (1<<round) ){
+			for(int i = 0; i < 4080  - (1<<round); i = i + (1<<round) ){
 				struct node* ext_node = ( struct node*)((void*)ref + (1<<round));
-				printf("%p 		 %p\n", mdp, ext_node);
+				printf("%p 		 %p     %p      %d\n", mdp, ext_node,map[round], round);
 				fflush(NULL);
 				ext_node -> prev = ref;
 				ext_node -> next = NULL;
 				ref -> next = ext_node;
 				ref = ext_node;
-				// ref = ref + 1;
 			}
 		}
 		// printf(" 	gg	 \n");
