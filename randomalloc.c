@@ -38,6 +38,7 @@ void replace(struct node *nodes[])
 {
 	int i = rand() % num_nodes;
 	struct node *original = nodes[i];
+	printf("%d      %d       %d\n", i, original->id, original->size);
 	assert(original->id == i);
 	total_mem -= original->size;
 	myfree(original);
