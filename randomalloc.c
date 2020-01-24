@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "memory.h"
-
+#include <time.h>
 #undef malloc
 #undef free
 
@@ -10,7 +10,7 @@
 #define MAX_REPLACEMENTS 1000000
 
 size_t total_mem = 0;
-
+static int cases_done = 0;
 struct node {
 	int size;
 	int id;
@@ -21,6 +21,7 @@ static int num_replacements = MAX_REPLACEMENTS;
 
 struct node* allocate_n(int id)
 {
+	// printf("%ld HELLO\n",sizeof(struct node*));
 	size_t size = sizeof(struct node) + (rand() % 4096);
 	struct node *n = (struct node*)mymalloc(size);
 	total_mem += size;
@@ -29,6 +30,7 @@ struct node* allocate_n(int id)
 		printf("unable to allocate new node\n");
 		exit(0);
 	}
+
 	n->size = size;
 	n->id = id;
 	return n;
@@ -38,7 +40,7 @@ void replace(struct node *nodes[])
 {
 	int i = rand() % num_nodes;
 	struct node *original = nodes[i];
-	printf("%d      %d       %d\n", i, original->id, original->size);
+	// printf("%p    %d      %d\n",original ,original->id, i);
 	assert(original->id == i);
 	total_mem -= original->size;
 	myfree(original);
@@ -48,9 +50,16 @@ void replace(struct node *nodes[])
 int main(int argc, char *argv[])
 {
 	int i;
+	srand(time(NULL));
 	assert(argc <= 4);
 
-	if (argc >= 2) {
+	if (argc > 2) {
+		num_replacements = atoi(argv[1]);
+		assert(num_replacements > 0);
+		num_nodes = atoi(argv[2]);
+	}
+
+	if (argc == 2) {
 		num_replacements = atoi(argv[1]);
 		assert(num_replacements > 0);
 	}
@@ -75,6 +84,7 @@ int main(int argc, char *argv[])
 
 	for (i = 0; i < num_nodes; i++)
 	{
+		cases_done++;
 		assert(nodes[i]);
 		total_mem -= nodes[i]->size;
 		myfree(nodes[i]);
